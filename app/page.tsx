@@ -605,10 +605,11 @@ export default function Home() {
         </div>
         <div className="project-grid">
           {[
-            ["/projects/garage.webp", "Garage Floor"],
-            ["/projects/patio.webp", "Patio"],
-            ["/projects/driveway.webp", "Driveway"],
-            ["/projects/pool-deck.webp", "Pool Deck"],
+            ["/projects/decorative-driveway.webp", "Decorative Concrete Driveway"],
+            ["/projects/stained-driveway.webp", "Stained Concrete Driveway"],
+            ["/projects/pool-deck-new.webp", "Pool Deck Coating"],
+            ["/projects/flake-garage.webp", "Flake Garage Floor"],
+            ["/projects/screened-patio.webp", "Screened Patio Coating"],
           ].map(([src, title]) => (
             <figure key={title}>
               <img src={src} alt={`Spartan Coatings ${title}`} />

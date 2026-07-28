@@ -198,7 +198,10 @@ h2 { font-size: clamp(37px,4.1vw,61px); letter-spacing: -.052em; line-height: 1.
 .video-section .button { margin-top: 14px; }
 .video-section video { aspect-ratio: 16/9; background: #090b09; box-shadow: 0 22px 60px rgba(0,0,0,.34); object-fit: cover; width: 100%; }
 
-.project-grid { display: grid; gap: 10px; grid-template-columns: repeat(4,1fr); }
+.project-grid { display: grid; gap: 10px; grid-template-columns: repeat(6,1fr); }
+.project-grid figure { grid-column: span 2; }
+.project-grid figure:nth-child(4),
+.project-grid figure:nth-child(5) { grid-column: span 3; }
 .project-grid figure { background: #111; height: 310px; margin: 0; overflow: hidden; position: relative; }
 .project-grid img { height: 100%; object-fit: cover; transition: transform .4s ease; width: 100%; }
 .project-grid figure:hover img { transform: scale(1.035); }
@@ -251,6 +254,9 @@ footer a { color: var(--lime); font-weight: 800; text-decoration: none; }
   .feature-grid article { min-height: 220px; }
   .video-section, .faq { grid-template-columns: 1fr; }
   .project-grid { grid-template-columns: 1fr 1fr; }
+  .project-grid figure,
+  .project-grid figure:nth-child(4),
+  .project-grid figure:nth-child(5) { grid-column: auto; }
   .process-grid { grid-template-columns: 1fr 1fr; }
   .section-heading { grid-template-columns: 1fr; }
   .section-heading .kicker { grid-column: auto; }
