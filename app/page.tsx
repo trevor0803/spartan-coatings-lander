@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import HlsVideo from "./HlsVideo";
 
 const PHONE_DISPLAY = "(904) 709-7794";
 const PHONE_LINK = "tel:+19047097794";
@@ -546,16 +547,7 @@ export default function Home() {
             Get My Free Evaluation <span>↑</span>
           </a>
         </div>
-        <video
-          controls
-          playsInline
-          preload="metadata"
-          poster="/spartan-video-thumbnail.webp"
-          aria-label="Matt Casey concrete coating buyer guide"
-        >
-          <source src="/matt-introduction.mp4" type="video/mp4" />
-          Your browser does not support embedded video.
-        </video>
+        <HlsVideo />
       </section>
 
       <section className="why section" id="why">
