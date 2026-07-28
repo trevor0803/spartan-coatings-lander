@@ -7,14 +7,36 @@ const PHONE_DISPLAY = "(904) 709-7794";
 const PHONE_LINK = "tel:+19047097794";
 
 const projectTypes = [
-  "Garage",
-  "Patio",
+  "Garage Floor",
+  "Patio / Lanai",
   "Pool Deck",
   "Driveway",
-  "Walkway",
-  "Porch",
-  "Commercial",
-  "Other",
+  "Walkway / Porch",
+  "Commercial Space",
+  "More than one area",
+  "Not sure yet",
+];
+
+const projectSizes = [
+  "Small — under 400 sq. ft.",
+  "Medium — 400–800 sq. ft.",
+  "Large — over 800 sq. ft.",
+  "Not sure",
+];
+
+const projectPriorities = [
+  "Appearance",
+  "Durability",
+  "Easier maintenance",
+  "Protecting the concrete",
+  "All of the above",
+];
+
+const projectTimings = [
+  "ASAP",
+  "Within 30 days",
+  "1–3 months",
+  "Just gathering information",
 ];
 
 const reviews = [
@@ -125,26 +147,20 @@ export default function Home() {
     fbq("track", "PageView");
   }, []);
 
-  function toggleProject(project: string) {
-    setForm((current) => ({
-      ...current,
-      projectTypes: current.projectTypes.includes(project)
-        ? current.projectTypes.filter((item) => item !== project)
-        : [...current.projectTypes, project],
-    }));
+  function chooseProject(project: string) {
+    setError("");
+    setForm((current) => ({ ...current, projectTypes: [project] }));
+    setStep(1);
   }
 
-  function nextStep() {
+  function chooseAnswer(
+    field: "size" | "priority" | "timing",
+    value: string,
+    nextStep: number,
+  ) {
     setError("");
-    if (step === 0 && !form.projectTypes.length) {
-      setError("Choose at least one area to continue.");
-      return;
-    }
-    if (step === 1 && (!form.size || !form.priority)) {
-      setError("Please answer both questions to continue.");
-      return;
-    }
-    setStep((current) => Math.min(current + 1, 2));
+    setForm((current) => ({ ...current, [field]: value }));
+    setStep(nextStep);
   }
 
   async function submitForm(event: FormEvent<HTMLFormElement>) {
@@ -261,120 +277,116 @@ export default function Home() {
             ) : (
               <form onSubmit={submitForm}>
                 <div className="survey-progress">
-                  {[0, 1, 2].map((item) => (
+                  {[0, 1, 2, 3, 4].map((item) => (
                     <span key={item} className={item <= step ? "active" : ""} />
                   ))}
                 </div>
                 <div className="survey-step-label">
-                  Step {step + 1} of 3
+                  Step {step + 1} of 5
                 </div>
 
                 {step === 0 && (
                   <div className="survey-screen">
                     <h2>What area are you looking to coat?</h2>
-                    <p>Select all that apply.</p>
+                    <p>Choose the best answer.</p>
                     <div className="survey-options project-options">
                       {projectTypes.map((project) => (
                         <button
                           type="button"
                           key={project}
-                          className={
-                            form.projectTypes.includes(project)
-                              ? "selected"
-                              : ""
-                          }
-                          onClick={() => toggleProject(project)}
-                          aria-pressed={form.projectTypes.includes(project)}
+                          onClick={() => chooseProject(project)}
                         >
-                          {form.projectTypes.includes(project) && <b>✓</b>}
                           {project}
+                          <span>→</span>
                         </button>
                       ))}
                     </div>
-                    {error && <p className="form-error">{error}</p>}
-                    <button
-                      className="button survey-next"
-                      type="button"
-                      onClick={nextStep}
-                    >
-                      Continue <span>→</span>
-                    </button>
                   </div>
                 )}
 
                 {step === 1 && (
                   <div className="survey-screen">
-                    <h2>A little more about the project.</h2>
-                    <label>
-                      Approximately how large is the area?
-                      <select
-                        value={form.size}
-                        onChange={(event) =>
-                          setForm({ ...form, size: event.target.value })
-                        }
-                      >
-                        <option value="">Choose one</option>
-                        <option>Small — under 400 sq. ft.</option>
-                        <option>Medium — 400–800 sq. ft.</option>
-                        <option>Large — over 800 sq. ft.</option>
-                        <option>Not sure</option>
-                      </select>
-                    </label>
-                    <label>
-                      What matters most to you?
-                      <select
-                        value={form.priority}
-                        onChange={(event) =>
-                          setForm({ ...form, priority: event.target.value })
-                        }
-                      >
-                        <option value="">Choose one</option>
-                        <option>Appearance</option>
-                        <option>Durability</option>
-                        <option>Easier maintenance</option>
-                        <option>Protecting the concrete</option>
-                        <option>All of the above</option>
-                      </select>
-                    </label>
-                    {error && <p className="form-error">{error}</p>}
-                    <div className="survey-nav">
-                      <button
-                        type="button"
-                        className="back-button"
-                        onClick={() => setStep(0)}
-                      >
-                        ← Back
-                      </button>
-                      <button
-                        className="button"
-                        type="button"
-                        onClick={nextStep}
-                      >
-                        Continue <span>→</span>
-                      </button>
+                    <h2>Approximately how large is the area?</h2>
+                    <p>Choose the closest estimate.</p>
+                    <div className="survey-options answer-options">
+                      {projectSizes.map((size) => (
+                        <button
+                          type="button"
+                          key={size}
+                          onClick={() => chooseAnswer("size", size, 2)}
+                        >
+                          {size}
+                          <span>→</span>
+                        </button>
+                      ))}
                     </div>
+                    <button
+                      type="button"
+                      className="back-button screen-back"
+                      onClick={() => setStep(0)}
+                    >
+                      ← Back
+                    </button>
                   </div>
                 )}
 
                 {step === 2 && (
+                  <div className="survey-screen">
+                    <h2>What matters most to you?</h2>
+                    <p>Choose your top priority.</p>
+                    <div className="survey-options answer-options">
+                      {projectPriorities.map((priority) => (
+                        <button
+                          type="button"
+                          key={priority}
+                          onClick={() =>
+                            chooseAnswer("priority", priority, 3)
+                          }
+                        >
+                          {priority}
+                          <span>→</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="back-button screen-back"
+                      onClick={() => setStep(1)}
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                )}
+
+                {step === 3 && (
+                  <div className="survey-screen">
+                    <h2>When are you hoping to complete the project?</h2>
+                    <p>Choose the best answer.</p>
+                    <div className="survey-options answer-options">
+                      {projectTimings.map((timing) => (
+                        <button
+                          type="button"
+                          key={timing}
+                          onClick={() => chooseAnswer("timing", timing, 4)}
+                        >
+                          {timing}
+                          <span>→</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="back-button screen-back"
+                      onClick={() => setStep(2)}
+                    >
+                      ← Back
+                    </button>
+                  </div>
+                )}
+
+                {step === 4 && (
                   <div className="survey-screen contact-screen">
                     <h2>Where should we send your evaluation details?</h2>
-                    <label>
-                      When are you hoping to complete the project?
-                      <select
-                        required
-                        value={form.timing}
-                        onChange={(event) =>
-                          setForm({ ...form, timing: event.target.value })
-                        }
-                      >
-                        <option value="">Choose one</option>
-                        <option>ASAP</option>
-                        <option>Within 30 days</option>
-                        <option>1–3 months</option>
-                        <option>Just gathering information</option>
-                      </select>
-                    </label>
                     <div className="two-fields">
                       <label>
                         First Name
@@ -490,7 +502,7 @@ export default function Home() {
                       <button
                         type="button"
                         className="back-button"
-                        onClick={() => setStep(1)}
+                        onClick={() => setStep(3)}
                       >
                         ← Back
                       </button>
@@ -608,7 +620,7 @@ export default function Home() {
             ["/projects/decorative-driveway.webp", "Decorative Concrete Driveway"],
             ["/projects/stained-driveway.webp", "Stained Concrete Driveway"],
             ["/projects/pool-deck-new.webp", "Pool Deck Coating"],
-            ["/projects/flake-garage.webp", "Flake Garage Floor"],
+            ["/projects/garage-floor-showcase.webp", "Garage Floor Coating"],
             ["/projects/screened-patio.webp", "Screened Patio Coating"],
           ].map(([src, title]) => (
             <figure key={title}>
