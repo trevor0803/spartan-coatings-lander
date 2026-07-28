@@ -196,7 +196,7 @@ export default function Home() {
     <main>
       <header>
         <a href="#top" aria-label="Spartan Coatings home">
-          <img src="https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/spartan-logo.png" alt="Spartan Coatings" />
+          <img src="/spartan-logo.png" alt="Spartan Coatings" />
         </a>
         <nav aria-label="Primary navigation">
           <a href="#why">Why Spartan</a>
@@ -227,7 +227,7 @@ export default function Home() {
           </div>
           <div className="hero-matt">
             <img
-              src="https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/matt-casey.webp"
+              src="/matt-casey.webp"
               alt="Matt Casey, founder of Spartan Coatings"
             />
             <div>
@@ -550,10 +550,10 @@ export default function Home() {
           controls
           playsInline
           preload="metadata"
-          poster="https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/spartan-video-thumbnail.webp"
+          poster="/spartan-video-thumbnail.webp"
           aria-label="Matt Casey concrete coating buyer guide"
         >
-          <source src="https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/matt-introduction.mp4" type="video/mp4" />
+          <source src="/matt-introduction.mp4" type="video/mp4" />
           Your browser does not support embedded video.
         </video>
       </section>
@@ -613,10 +613,10 @@ export default function Home() {
         </div>
         <div className="project-grid">
           {[
-            ["https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/projects/garage.webp", "Garage Floor"],
-            ["https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/projects/patio.webp", "Patio"],
-            ["https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/projects/driveway.webp", "Driveway"],
-            ["https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/projects/pool-deck.webp", "Pool Deck"],
+            ["/projects/garage.webp", "Garage Floor"],
+            ["/projects/patio.webp", "Patio"],
+            ["/projects/driveway.webp", "Driveway"],
+            ["/projects/pool-deck.webp", "Pool Deck"],
           ].map(([src, title]) => (
             <figure key={title}>
               <img src={src} alt={`Spartan Coatings ${title}`} />
@@ -719,7 +719,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <img src="https://spartan-coatings-trust.newleaf-digi-7833.chatgpt.site/spartan-logo.png" alt="Spartan Coatings" />
+        <img src="/spartan-logo.png" alt="Spartan Coatings" />
         <p>Jacksonville &amp; Northeast Florida</p>
         <a href={PHONE_LINK}>{PHONE_DISPLAY}</a>
         <span>
