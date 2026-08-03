@@ -47,10 +47,7 @@ export default function Template({ children }: TemplateProps) {
     const projectCopy = document.querySelector<HTMLElement>(
       ".projects .section-heading > p:not(.kicker)",
     );
-    if (projectCopy) {
-      projectCopy.textContent =
-        "Garage floor coatings first, followed by pool deck and patio projects from Spartan Coatings.";
-    }
+    projectCopy?.remove();
 
     const projectCta = document.querySelector<HTMLElement>(
       ".projects .section-cta p",
