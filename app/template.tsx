@@ -7,66 +7,32 @@ type TemplateProps = {
   children: ReactNode;
 };
 
-type SpriteProject = {
-  title: "Garage Floor Coating" | "Pool Deck Coating" | "Patio Coating";
-  kind: "sprite";
-  col: 0 | 1 | 2 | 3;
-  row: 0 | 1 | 2;
-};
-
-type ImageProject = {
-  title: "Garage Floor Coating";
-  kind: "image";
-  src: string;
-};
-
-type GalleryProject = SpriteProject | ImageProject;
-
-const galleryProjects: GalleryProject[] = [
-  { title: "Garage Floor Coating", kind: "sprite", col: 1, row: 0 },
-  { title: "Garage Floor Coating", kind: "sprite", col: 2, row: 0 },
-  { title: "Garage Floor Coating", kind: "sprite", col: 3, row: 0 },
-  { title: "Garage Floor Coating", kind: "sprite", col: 0, row: 1 },
-  { title: "Garage Floor Coating", kind: "sprite", col: 1, row: 1 },
-  { title: "Garage Floor Coating", kind: "sprite", col: 2, row: 1 },
-  { title: "Garage Floor Coating", kind: "image", src: "/projects/pool-deck.webp" },
-  { title: "Pool Deck Coating", kind: "sprite", col: 3, row: 1 },
-  { title: "Pool Deck Coating", kind: "sprite", col: 0, row: 2 },
-  { title: "Patio Coating", kind: "sprite", col: 1, row: 2 },
-  { title: "Patio Coating", kind: "sprite", col: 2, row: 2 },
-];
+const galleryProjects = [
+  ["/projects/garage-project-01.webp", "Garage Floor Coating"],
+  ["/projects/garage-project-02.webp", "Garage Floor Coating"],
+  ["/projects/garage-project-03.webp", "Garage Floor Coating"],
+  ["/projects/garage-project-04.webp", "Garage Floor Coating"],
+  ["/projects/garage-project-05.webp", "Garage Floor Coating"],
+  ["/projects/garage-project-06.webp", "Garage Floor Coating"],
+  ["/projects/pool-deck.webp", "Garage Floor Coating"],
+  ["/projects/pool-project-user.webp", "Pool Deck Coating"],
+  ["/projects/pool-deck-new.webp", "Pool Deck Coating"],
+  ["/projects/patio-project-user.webp", "Patio Coating"],
+  ["/projects/screened-patio.webp", "Patio Coating"],
+] as const;
 
 function ProjectGallery() {
   return (
     <>
-      {galleryProjects.map((project, index) => (
-        <figure className="gallery-project-new" key={`${project.title}-${index}`}>
-          {project.kind === "image" ? (
-            <img
-              className="gallery-photo"
-              src={project.src}
-              alt={`Spartan Coatings ${project.title}`}
-              loading={index < 4 ? "eager" : "lazy"}
-            />
-          ) : (
-            <div
-              className="gallery-crop"
-              role="img"
-              aria-label={`Spartan Coatings ${project.title}`}
-            >
-              <img
-                className="gallery-sprite-sheet"
-                src="/projects/gallery-sprite.webp?v=3"
-                alt=""
-                aria-hidden="true"
-                style={{
-                  left: `${project.col * -100}%`,
-                  top: `${project.row * -100}%`,
-                }}
-              />
-            </div>
-          )}
-          <figcaption>{project.title}</figcaption>
+      {galleryProjects.map(([src, title], index) => (
+        <figure className="gallery-project-new" key={src}>
+          <img
+            className="gallery-photo"
+            src={src}
+            alt={`Spartan Coatings ${title}`}
+            loading={index < 4 ? "eager" : "lazy"}
+          />
+          <figcaption>{title}</figcaption>
         </figure>
       ))}
     </>
@@ -93,6 +59,15 @@ export default function Template({ children }: TemplateProps) {
           display: none !important;
         }
 
+        .projects .section-cta p {
+          font-size: 0;
+        }
+
+        .projects .section-cta p::after {
+          content: "Have a garage, pool deck, or patio project in mind?";
+          font-size: 13px;
+        }
+
         .project-grid.gallery-eleven {
           display: grid !important;
           grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
@@ -117,30 +92,13 @@ export default function Template({ children }: TemplateProps) {
           background: #111 !important;
         }
 
-        .gallery-crop,
         .project-grid.gallery-eleven img.gallery-photo {
           display: block !important;
           width: 100% !important;
-          aspect-ratio: 16 / 9 !important;
           height: auto !important;
-        }
-
-        .gallery-crop {
-          overflow: hidden !important;
-          position: relative !important;
-        }
-
-        .gallery-sprite-sheet {
-          display: block !important;
-          position: absolute !important;
-          width: 400% !important;
-          height: 300% !important;
-          max-width: none !important;
-          object-fit: fill !important;
-        }
-
-        .project-grid.gallery-eleven img.gallery-photo {
+          aspect-ratio: 16 / 9 !important;
           object-fit: cover !important;
+          object-position: center !important;
         }
 
         .project-grid.gallery-eleven .gallery-project-new figcaption {
