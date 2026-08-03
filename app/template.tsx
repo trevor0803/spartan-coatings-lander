@@ -6,60 +6,75 @@ type TemplateProps = {
   children: ReactNode;
 };
 
+const galleryProjects = [
+  ["/projects/garage.webp", "Garage Floor Coating"],
+  ["/projects/flake-garage.webp", "Garage Floor Coating"],
+  ["/projects/garage-floor-showcase.webp", "Garage Floor Coating"],
+  ["/projects/decorative-driveway.webp", "Garage Floor Coating"],
+  ["/projects/stained-driveway.webp", "Garage Floor Coating"],
+  ["/projects/driveway.webp", "Garage Floor Coating"],
+  ["/projects/pool-deck-new.webp", "Pool Deck Coating"],
+  ["/projects/pool-deck.webp", "Pool Deck Coating"],
+  ["/projects/screened-patio.webp", "Patio Coating"],
+  ["/projects/patio.webp", "Patio Coating"],
+] as const;
+
 export default function Template({ children }: TemplateProps) {
   useLayoutEffect(() => {
     const gallery = document.querySelector<HTMLElement>(".project-grid");
     if (!gallery) return;
 
-    const figures = Array.from(gallery.querySelectorAll<HTMLElement>("figure"));
-    const decorativeDriveway = figures.find((figure) =>
-      figure.textContent?.includes("Decorative Concrete Driveway"),
+    gallery.replaceChildren(
+      ...galleryProjects.map(([src, title], index) => {
+        const figure = document.createElement("figure");
+        figure.dataset.galleryPosition = String(index + 1);
+
+        const image = document.createElement("img");
+        image.src = src;
+        image.alt = `Spartan Coatings ${title}`;
+        image.loading = index < 4 ? "eager" : "lazy";
+
+        const caption = document.createElement("figcaption");
+        caption.textContent = title;
+
+        figure.append(image, caption);
+        return figure;
+      }),
     );
 
-    if (decorativeDriveway) {
-      const image = decorativeDriveway.querySelector<HTMLImageElement>("img");
-      const caption = decorativeDriveway.querySelector<HTMLElement>("figcaption");
+    gallery.classList.add("gallery-ten");
 
-      if (image) {
-        image.src = "/projects/driveway.webp";
-        image.alt = "Spartan Coatings Commercial Concrete Coating";
-      }
-
-      if (caption) caption.textContent = "Commercial Concrete Coating";
-      decorativeDriveway.dataset.galleryPicture = "commercial";
+    const projectCopy = document.querySelector<HTMLElement>(
+      ".projects .section-heading > p:not(.kicker)",
+    );
+    if (projectCopy) {
+      projectCopy.textContent =
+        "Garage floor coatings first, followed by pool deck and patio projects from Spartan Coatings.";
     }
 
-    const alreadyHasInterior = Array.from(
-      gallery.querySelectorAll<HTMLElement>("figcaption"),
-    ).some((caption) => caption.textContent === "Interior Concrete Coating");
-
-    if (!alreadyHasInterior) {
-      const interiorFigure = document.createElement("figure");
-      interiorFigure.dataset.galleryPicture = "interior";
-
-      const interiorImage = document.createElement("img");
-      interiorImage.src = "/projects/flake-garage.webp";
-      interiorImage.alt = "Spartan Coatings Interior Concrete Coating";
-
-      const interiorCaption = document.createElement("figcaption");
-      interiorCaption.textContent = "Interior Concrete Coating";
-
-      interiorFigure.append(interiorImage, interiorCaption);
-      gallery.appendChild(interiorFigure);
+    const projectCta = document.querySelector<HTMLElement>(
+      ".projects .section-cta p",
+    );
+    if (projectCta) {
+      projectCta.textContent =
+        "Have a garage, pool deck, or patio project in mind?";
     }
-
-    gallery.classList.add("project-grid-six");
   }, []);
 
   return (
     <>
       {children}
       <style>{`
-        @media (min-width: 901px) {
-          .project-grid.project-grid-six figure,
-          .project-grid.project-grid-six figure:nth-child(4),
-          .project-grid.project-grid-six figure:nth-child(5) {
-            grid-column: span 2;
+        @media (min-width: 1001px) {
+          .project-grid.gallery-ten {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .project-grid.gallery-ten figure,
+          .project-grid.gallery-ten figure:nth-child(4),
+          .project-grid.gallery-ten figure:nth-child(5) {
+            grid-column: auto;
+            height: 360px;
           }
         }
       `}</style>
