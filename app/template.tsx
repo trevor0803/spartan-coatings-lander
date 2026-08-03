@@ -6,18 +6,25 @@ type TemplateProps = {
   children: ReactNode;
 };
 
-const galleryProjects = [
-  ["/projects/garage.webp", "Garage Floor Coating"],
-  ["/projects/flake-garage.webp", "Garage Floor Coating"],
-  ["/projects/garage-floor-showcase.webp", "Garage Floor Coating"],
-  ["/projects/decorative-driveway.webp", "Garage Floor Coating"],
-  ["/projects/stained-driveway.webp", "Garage Floor Coating"],
-  ["/projects/driveway.webp", "Garage Floor Coating"],
-  ["/projects/pool-deck-new.webp", "Pool Deck Coating"],
-  ["/projects/pool-deck.webp", "Pool Deck Coating"],
-  ["/projects/screened-patio.webp", "Patio Coating"],
-  ["/projects/patio.webp", "Patio Coating"],
-] as const;
+type GalleryProject = {
+  title: "Garage Floor Coating" | "Pool Deck Coating" | "Patio Coating";
+  x: "0%" | "33.333%" | "66.667%" | "100%";
+  y: "0%" | "50%" | "100%";
+};
+
+const galleryProjects: GalleryProject[] = [
+  { title: "Garage Floor Coating", x: "0%", y: "0%" },
+  { title: "Garage Floor Coating", x: "33.333%", y: "0%" },
+  { title: "Garage Floor Coating", x: "66.667%", y: "0%" },
+  { title: "Garage Floor Coating", x: "100%", y: "0%" },
+  { title: "Garage Floor Coating", x: "0%", y: "50%" },
+  { title: "Garage Floor Coating", x: "33.333%", y: "50%" },
+  { title: "Garage Floor Coating", x: "66.667%", y: "50%" },
+  { title: "Pool Deck Coating", x: "100%", y: "50%" },
+  { title: "Pool Deck Coating", x: "0%", y: "100%" },
+  { title: "Patio Coating", x: "33.333%", y: "100%" },
+  { title: "Patio Coating", x: "66.667%", y: "100%" },
+];
 
 export default function Template({ children }: TemplateProps) {
   useLayoutEffect(() => {
@@ -25,14 +32,15 @@ export default function Template({ children }: TemplateProps) {
     if (!gallery) return;
 
     gallery.replaceChildren(
-      ...galleryProjects.map(([src, title], index) => {
+      ...galleryProjects.map(({ title, x, y }, index) => {
         const figure = document.createElement("figure");
         figure.dataset.galleryPosition = String(index + 1);
 
-        const image = document.createElement("img");
-        image.src = src;
-        image.alt = `Spartan Coatings ${title}`;
-        image.loading = index < 4 ? "eager" : "lazy";
+        const image = document.createElement("div");
+        image.className = "gallery-sprite-photo";
+        image.setAttribute("role", "img");
+        image.setAttribute("aria-label", `Spartan Coatings ${title}`);
+        image.style.backgroundPosition = `${x} ${y}`;
 
         const caption = document.createElement("figcaption");
         caption.textContent = title;
@@ -42,7 +50,8 @@ export default function Template({ children }: TemplateProps) {
       }),
     );
 
-    gallery.classList.add("gallery-ten");
+    gallery.classList.remove("gallery-ten");
+    gallery.classList.add("gallery-eleven");
 
     const projectCopy = document.querySelector<HTMLElement>(
       ".projects .section-heading > p:not(.kicker)",
@@ -62,16 +71,25 @@ export default function Template({ children }: TemplateProps) {
     <>
       {children}
       <style>{`
-        @media (min-width: 1001px) {
-          .project-grid.gallery-ten {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
+        .project-grid.gallery-eleven figure,
+        .project-grid.gallery-eleven figure:nth-child(4),
+        .project-grid.gallery-eleven figure:nth-child(5) {
+          grid-column: auto;
+          height: auto;
+          overflow: hidden;
+        }
 
-          .project-grid.gallery-ten figure,
-          .project-grid.gallery-ten figure:nth-child(4),
-          .project-grid.gallery-ten figure:nth-child(5) {
-            grid-column: auto;
-            height: 360px;
+        .gallery-sprite-photo {
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          background-image: url('/projects/gallery-sprite.webp');
+          background-repeat: no-repeat;
+          background-size: 400% 300%;
+        }
+
+        @media (min-width: 1001px) {
+          .project-grid.gallery-eleven {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
       `}</style>
