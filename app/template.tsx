@@ -48,6 +48,12 @@ export default function Template({ children }: TemplateProps) {
 
     target.classList.add("gallery-eleven");
     setGallery(target);
+
+    const heroLead = document.querySelector<HTMLElement>(".hero-lead");
+    if (heroLead) {
+      heroLead.textContent =
+        "Over 20 years of hands-on experience, professional preparation, premium materials, and systems selected for Florida concrete.";
+    }
   }, []);
 
   return (

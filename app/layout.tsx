@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Northeast Florida Concrete Coating Experts | Spartan Coatings",
   description:
-    "Schedule a free concrete evaluation with Spartan Coatings. Nearly 20 years of experience, professional surface preparation, and premium systems built for Florida.",
+    "Schedule a free concrete evaluation with Spartan Coatings. Over 20 years of experience, professional surface preparation, and premium systems built for Florida.",
   other: {
     "codex-preview": "development",
   },
