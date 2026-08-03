@@ -95,8 +95,9 @@ export default function Template({ children }: TemplateProps) {
 
         .project-grid.gallery-eleven {
           display: grid !important;
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
           gap: 14px !important;
+          position: relative !important;
         }
 
         .project-grid.gallery-eleven > figure:not(.gallery-project-new) {
@@ -154,9 +155,47 @@ export default function Template({ children }: TemplateProps) {
           right: 0 !important;
         }
 
+        @media (max-width: 1099px) and (min-width: 769px) {
+          .project-grid.gallery-eleven {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+
         @media (max-width: 768px) {
           .project-grid.gallery-eleven {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: none !important;
+            grid-auto-flow: column !important;
+            grid-auto-columns: 88% !important;
+            gap: 12px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            overscroll-behavior-inline: contain !important;
+            padding: 0 0 12px !important;
+            scroll-behavior: smooth !important;
+            scroll-snap-type: x mandatory !important;
+            scrollbar-width: none !important;
+            -webkit-overflow-scrolling: touch !important;
+          }
+
+          .project-grid.gallery-eleven::-webkit-scrollbar {
+            display: none !important;
+          }
+
+          .project-grid.gallery-eleven::after {
+            content: "Swipe to see more →";
+            color: #687166;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            position: absolute;
+            right: 0;
+            top: -24px;
+            text-transform: uppercase;
+          }
+
+          .project-grid.gallery-eleven .gallery-project-new {
+            scroll-snap-align: start !important;
+            scroll-snap-stop: always !important;
           }
         }
       `}</style>
