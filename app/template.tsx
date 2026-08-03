@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useLayoutEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type TemplateProps = {
   children: ReactNode;
@@ -9,8 +10,8 @@ type TemplateProps = {
 type SpriteProject = {
   title: "Garage Floor Coating" | "Pool Deck Coating" | "Patio Coating";
   kind: "sprite";
-  x: "0%" | "33.333%" | "66.667%" | "100%";
-  y: "0%" | "50%" | "100%";
+  col: 0 | 1 | 2 | 3;
+  row: 0 | 1 | 2;
 };
 
 type ImageProject = {
@@ -22,107 +23,140 @@ type ImageProject = {
 type GalleryProject = SpriteProject | ImageProject;
 
 const galleryProjects: GalleryProject[] = [
-  { title: "Garage Floor Coating", kind: "sprite", x: "33.333%", y: "0%" },
-  { title: "Garage Floor Coating", kind: "sprite", x: "66.667%", y: "0%" },
-  { title: "Garage Floor Coating", kind: "sprite", x: "100%", y: "0%" },
-  { title: "Garage Floor Coating", kind: "sprite", x: "0%", y: "50%" },
-  { title: "Garage Floor Coating", kind: "sprite", x: "33.333%", y: "50%" },
-  { title: "Garage Floor Coating", kind: "sprite", x: "66.667%", y: "50%" },
+  { title: "Garage Floor Coating", kind: "sprite", col: 1, row: 0 },
+  { title: "Garage Floor Coating", kind: "sprite", col: 2, row: 0 },
+  { title: "Garage Floor Coating", kind: "sprite", col: 3, row: 0 },
+  { title: "Garage Floor Coating", kind: "sprite", col: 0, row: 1 },
+  { title: "Garage Floor Coating", kind: "sprite", col: 1, row: 1 },
+  { title: "Garage Floor Coating", kind: "sprite", col: 2, row: 1 },
   { title: "Garage Floor Coating", kind: "image", src: "/projects/pool-deck.webp" },
-  { title: "Pool Deck Coating", kind: "sprite", x: "100%", y: "50%" },
-  { title: "Pool Deck Coating", kind: "sprite", x: "0%", y: "100%" },
-  { title: "Patio Coating", kind: "sprite", x: "33.333%", y: "100%" },
-  { title: "Patio Coating", kind: "sprite", x: "66.667%", y: "100%" },
+  { title: "Pool Deck Coating", kind: "sprite", col: 3, row: 1 },
+  { title: "Pool Deck Coating", kind: "sprite", col: 0, row: 2 },
+  { title: "Patio Coating", kind: "sprite", col: 1, row: 2 },
+  { title: "Patio Coating", kind: "sprite", col: 2, row: 2 },
 ];
 
+function ProjectGallery() {
+  return (
+    <>
+      {galleryProjects.map((project, index) => (
+        <figure className="gallery-project-new" key={`${project.title}-${index}`}>
+          {project.kind === "image" ? (
+            <img
+              className="gallery-photo"
+              src={project.src}
+              alt={`Spartan Coatings ${project.title}`}
+              loading={index < 4 ? "eager" : "lazy"}
+            />
+          ) : (
+            <div
+              className="gallery-crop"
+              role="img"
+              aria-label={`Spartan Coatings ${project.title}`}
+            >
+              <img
+                className="gallery-sprite-sheet"
+                src="/projects/gallery-sprite.webp?v=3"
+                alt=""
+                aria-hidden="true"
+                style={{
+                  left: `${project.col * -100}%`,
+                  top: `${project.row * -100}%`,
+                }}
+              />
+            </div>
+          )}
+          <figcaption>{project.title}</figcaption>
+        </figure>
+      ))}
+    </>
+  );
+}
+
 export default function Template({ children }: TemplateProps) {
-  useLayoutEffect(() => {
-    const gallery = document.querySelector<HTMLElement>(".project-grid");
-    if (!gallery) return;
+  const [gallery, setGallery] = useState<HTMLElement | null>(null);
 
-    gallery.replaceChildren(
-      ...galleryProjects.map((project, index) => {
-        const figure = document.createElement("figure");
-        figure.dataset.galleryPosition = String(index + 1);
+  useEffect(() => {
+    const target = document.querySelector<HTMLElement>(".project-grid");
+    if (!target) return;
 
-        let image: HTMLElement;
-
-        if (project.kind === "image") {
-          const img = document.createElement("img");
-          img.className = "gallery-photo";
-          img.src = project.src;
-          img.alt = `Spartan Coatings ${project.title}`;
-          img.loading = index < 4 ? "eager" : "lazy";
-          image = img;
-        } else {
-          const sprite = document.createElement("div");
-          sprite.className = "gallery-sprite-photo";
-          sprite.setAttribute("role", "img");
-          sprite.setAttribute("aria-label", `Spartan Coatings ${project.title}`);
-          sprite.style.backgroundPosition = `${project.x} ${project.y}`;
-          image = sprite;
-        }
-
-        const caption = document.createElement("figcaption");
-        caption.textContent = project.title;
-
-        figure.append(image, caption);
-        return figure;
-      }),
-    );
-
-    gallery.classList.remove("gallery-ten");
-    gallery.classList.add("gallery-eleven");
-
-    const projectCopy = document.querySelector<HTMLElement>(
-      ".projects .section-heading > p:not(.kicker)",
-    );
-    projectCopy?.remove();
-
-    const projectCta = document.querySelector<HTMLElement>(
-      ".projects .section-cta p",
-    );
-    if (projectCta) {
-      projectCta.textContent =
-        "Have a garage, pool deck, or patio project in mind?";
-    }
+    target.classList.add("gallery-eleven");
+    setGallery(target);
   }, []);
 
   return (
     <>
       {children}
+      {gallery ? createPortal(<ProjectGallery />, gallery) : null}
       <style>{`
+        .projects .section-heading > p:not(.kicker) {
+          display: none !important;
+        }
+
         .project-grid.gallery-eleven {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 14px !important;
         }
 
-        .project-grid.gallery-eleven figure,
-        .project-grid.gallery-eleven figure:nth-child(4),
-        .project-grid.gallery-eleven figure:nth-child(5) {
-          grid-column: auto;
-          height: auto;
-          min-width: 0;
-          overflow: hidden;
+        .project-grid.gallery-eleven > figure:not(.gallery-project-new) {
+          display: none !important;
         }
 
-        .gallery-sprite-photo,
+        .project-grid.gallery-eleven .gallery-project-new,
+        .project-grid.gallery-eleven .gallery-project-new:nth-child(4),
+        .project-grid.gallery-eleven .gallery-project-new:nth-child(5) {
+          display: block !important;
+          grid-column: auto !important;
+          height: auto !important;
+          min-width: 0 !important;
+          margin: 0 !important;
+          overflow: hidden !important;
+          position: relative !important;
+          background: #111 !important;
+        }
+
+        .gallery-crop,
         .project-grid.gallery-eleven img.gallery-photo {
-          display: block;
-          width: 100%;
-          height: auto;
-          aspect-ratio: 16 / 9;
-          object-fit: cover;
+          display: block !important;
+          width: 100% !important;
+          aspect-ratio: 16 / 9 !important;
+          height: auto !important;
         }
 
-        .gallery-sprite-photo {
-          background-image: url('/projects/gallery-sprite.webp');
-          background-repeat: no-repeat;
-          background-size: 400% 300%;
+        .gallery-crop {
+          overflow: hidden !important;
+          position: relative !important;
+        }
+
+        .gallery-sprite-sheet {
+          display: block !important;
+          position: absolute !important;
+          width: 400% !important;
+          height: 300% !important;
+          max-width: none !important;
+          object-fit: fill !important;
+        }
+
+        .project-grid.gallery-eleven img.gallery-photo {
+          object-fit: cover !important;
+        }
+
+        .project-grid.gallery-eleven .gallery-project-new figcaption {
+          background: rgba(12, 16, 12, .9) !important;
+          bottom: 0 !important;
+          color: white !important;
+          font-size: 12px !important;
+          font-weight: 800 !important;
+          left: 0 !important;
+          padding: 13px 16px !important;
+          position: absolute !important;
+          right: 0 !important;
         }
 
         @media (max-width: 768px) {
           .project-grid.gallery-eleven {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>
