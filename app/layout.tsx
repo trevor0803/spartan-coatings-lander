@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "Schedule a free concrete evaluation with Spartan Coatings. Over 20 years of experience, professional surface preparation, and premium systems built for Florida.",
   other: {
     "codex-preview": "development",
+    "facebook-domain-verification": "rua0gz7fox55n177au9ij439bqub0m",
   },
   icons: {
     icon: "/favicon.svg",
