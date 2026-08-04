@@ -204,7 +204,14 @@ export default function Home() {
           ...form,
           eventId,
           fbp: cookies._fbp || "",
-          fbc: cookies._fbc || "",
+          fbc:
+            cookies._fbc ||
+            (() => {
+              const clickId = new URLSearchParams(window.location.search).get(
+                "fbclid",
+              );
+              return clickId ? `fb.1.${Date.now()}.${clickId}` : "";
+            })(),
           externalId: xid,
           eventSourceUrl: window.location.href,
         }),
@@ -261,7 +268,7 @@ export default function Home() {
             <em> Concrete Coating Experts.</em>
           </h1>
           <p className="hero-lead">
-            Nearly 20 years of hands-on experience, professional preparation,
+            Over 20 years of hands-on experience, professional preparation,
             premium materials, and systems selected for Florida concrete.
           </p>
           <div className="rating">
@@ -507,19 +514,11 @@ export default function Home() {
                         I agree to receive calls and texts from Spartan Coatings
                         about my request. Msg &amp; data rates may apply. Reply
                         STOP to opt out. Consent is not a condition of purchase.{" "}
-                        <a
-                          href="https://mat-spartan-coatings.vercel.app/privacy"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href="/privacy" target="_blank" rel="noreferrer">
                           Privacy
                         </a>{" "}
                         ·{" "}
-                        <a
-                          href="https://mat-spartan-coatings.vercel.app/terms"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href="/terms" target="_blank" rel="noreferrer">
                           Terms
                         </a>
                       </span>
@@ -754,6 +753,10 @@ export default function Home() {
         <img src="/spartan-logo.png" alt="Spartan Coatings" />
         <p>Jacksonville &amp; Northeast Florida</p>
         <a href={PHONE_LINK}>{PHONE_DISPLAY}</a>
+        <span>
+          <a href="/privacy">Privacy Policy</a> ·{" "}
+          <a href="/terms">Terms of Service</a>
+        </span>
         <span>
           © 2026 Spartan Coatings · DBA of FloorEver Solutions LLC
         </span>
