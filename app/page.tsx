@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import HlsVideo from "./HlsVideo";
 
 const PHONE_DISPLAY = "(904) 709-7794";
 const PHONE_LINK = "tel:+19047097794";
+const META_PIXEL_ID = "3187285261472604";
 
 const projectTypes = [
   "Garage Floor",
@@ -113,13 +114,29 @@ type MetaPixel = ((...args: unknown[]) => void) & {
   version: string;
 };
 
+function getOrCreateExternalId() {
+  let xid = (document.cookie.match(/(^| )mat_xid=([^;]+)/) || [])[2];
+  if (!xid) {
+    xid = crypto.randomUUID();
+    document.cookie =
+      "mat_xid=" +
+      xid +
+      "; max-age=31536000; path=/; SameSite=Lax; Secure";
+  }
+  return xid;
+}
+
 export default function Home() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(blankForm);
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
   const [error, setError] = useState("");
+  const externalIdRef = useRef("");
 
   useEffect(() => {
+    const xid = getOrCreateExternalId();
+    externalIdRef.current = xid;
+
     const metaWindow = window as Window & {
       fbq?: MetaPixel;
       _fbq?: MetaPixel;
@@ -142,8 +159,7 @@ export default function Home() {
     script.src = "https://connect.facebook.net/en_US/fbevents.js";
     document.head.appendChild(script);
 
-    fbq("set", "autoConfig", false, "3187285261472604");
-    fbq("init", "3187285261472604");
+    fbq("init", META_PIXEL_ID, { external_id: xid });
     fbq("track", "PageView");
   }, []);
 
@@ -173,6 +189,8 @@ export default function Home() {
         typeof crypto !== "undefined" && "randomUUID" in crypto
           ? `lead_${crypto.randomUUID()}`
           : `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const xid = externalIdRef.current || getOrCreateExternalId();
+      externalIdRef.current = xid;
       const cookies = Object.fromEntries(
         document.cookie
           .split(";")
@@ -187,6 +205,7 @@ export default function Home() {
           eventId,
           fbp: cookies._fbp || "",
           fbc: cookies._fbc || "",
+          externalId: xid,
           eventSourceUrl: window.location.href,
         }),
       });
@@ -197,6 +216,14 @@ export default function Home() {
           fbq?: (...args: unknown[]) => void;
         }
       ).fbq;
+      fbq?.("init", META_PIXEL_ID, {
+        em: form.email,
+        ph: form.phone,
+        fn: form.firstName,
+        ln: form.lastName,
+        zp: form.zip,
+        external_id: xid,
+      });
       fbq?.("track", "Lead", {}, { eventID: eventId });
       setStatus("success");
     } catch (submissionError) {
