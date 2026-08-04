@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         eventId: body.eventId,
         fbp: body.fbp,
         fbc: body.fbc,
-        eventSourceUrl: body.eventSourceUrl,
+        sourceUrl: body.eventSourceUrl,
       }),
     });
 
