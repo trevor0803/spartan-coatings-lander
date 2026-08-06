@@ -1,0 +1,3 @@
+# Keep line endings consistent so Windows editors do not report every
+# file as changed when nothing actually changed.
+* text=auto eol=lf
